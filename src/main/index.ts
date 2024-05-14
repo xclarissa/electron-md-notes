@@ -6,7 +6,7 @@ import icon from '../../resources/icon.png?asset'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    // PESQUISAR COMO MOSTRAR ICONES FECHAR MAX E MIN DO WINDOWS
+    // PESQUISAR COMO MOSTRAR ICONES FECHAR MAX E MIN DO WINDOWS 10
     width: 900,
     height: 670,
     show: false,
