@@ -1,4 +1,4 @@
-# markdown-notes-electron
+# Markdown notes - Electron app
 
 An Electron application with React and TypeScript
 
