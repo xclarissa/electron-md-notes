@@ -2,6 +2,7 @@ import {
   ActionButtonRow,
   Content,
   DraggableTopBar,
+  FloatingNoteTitle,
   MarkdownEditor,
   NotePreviewList,
   RootLayout,
@@ -17,6 +18,7 @@ function App() {
         <NotePreviewList className="mt-3 space-y-2" />
       </Sidebar>
       <Content className="border-l bg-zinc-900/50 border-l-white/20">
+        <FloatingNoteTitle className="pt-2" />
         <MarkdownEditor />
       </Content>
     </RootLayout>
