@@ -1,10 +1,17 @@
-import MDEditor from '@uiw/react-md-editor'
+import {
+  MDXEditor,
+  headingsPlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  quotePlugin
+} from '@mdxeditor/editor'
 
 export const MarkdownEditor = () => {
   return (
-    <MDEditor
-      height={200}
-      className="outline-none min-h-screen max-w-none text-lg px-8 py-5 caret-yellow-500"
+    <MDXEditor
+      markdown="# Hello from MDX EDITOR"
+      plugins={[headingsPlugin(), listsPlugin(), quotePlugin(), markdownShortcutPlugin()]}
+      contentEditableClassName="outline-none min-h-screen max-w-none text-lg px-8 py-5 caret-yellow-500 prose prose-invert prose-p:my-3 prose-p:leading-relaxed prose-headings:my-4 prose-blockquote:my-4 prose-ul:my-2 prose-li:my-0 prose-code:px-1 prose-code:text-red-500 prose-code:before:content-[''] prose-code:after:content-['']"
     />
   )
 }
