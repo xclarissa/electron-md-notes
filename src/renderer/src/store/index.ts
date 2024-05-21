@@ -1,4 +1,4 @@
-import { NoteInfo } from '@shared/models'
+import { NoteContent, NoteInfo } from '@shared/models'
 import { atom } from 'jotai'
 import { unwrap } from 'jotai/utils'
 
@@ -69,4 +69,29 @@ export const deleteNoteAtom = atom(null, (get, set) => {
   )
 
   set(selectedNoteIndexAtom, null)
+})
+
+export const saveNoteAtom = atom(null, async (get, set, newContent: NoteContent) => {
+  const notes = get(notesAtom)
+  const selectedNote = get(selectedNoteAtom)
+
+  if (!notes || !selectedNote) return
+
+  //salvar no disco
+  await window.context.writeNote(selectedNote.title, newContent)
+
+  //atualizar ultima lastEditTime da nota
+  set(
+    notesAtom,
+    notes.map((note) => {
+      if (note.title === selectedNote.title) {
+        return {
+          ...note,
+          lastEditTime: Date.now()
+        }
+      }
+
+      return note
+    })
+  )
 })
