@@ -1,9 +1,9 @@
-import { getNotes } from '@/lib'
 import { electronApp, is, optimizer } from '@electron-toolkit/utils'
-import { GetNotes } from '@shared/types'
+import { GetNotes, ReadNoteContent } from '@shared/types'
 import { BrowserWindow, app, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
+import { getNotes, readNoteContent } from './lib'
 
 function createWindow(): void {
   // Create the browser window.
@@ -67,7 +67,9 @@ app.whenReady().then(() => {
   //Get notes app
   // o preload vai invocar este evento
   ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => getNotes(...args))
-
+  ipcMain.handle('readNoteContent', (_, ...args: Parameters<ReadNoteContent>) =>
+    readNoteContent(...args)
+  )
   createWindow()
 
   app.on('activate', function () {

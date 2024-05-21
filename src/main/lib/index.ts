@@ -1,12 +1,11 @@
-import { appDirName, fileEncoding } from '@shared/constants'
+import { appDirName, fileEncoding, specificLocal } from '@shared/constants'
 import { NoteInfo } from '@shared/models'
-import { GetNotes } from '@shared/types'
-import { ensureDir, readdir, stat } from 'fs-extra'
+import { GetNotes, ReadNoteContent } from '@shared/types'
+import { ensureDir, readFile, readdir, stat } from 'fs-extra'
 import { homedir } from 'os'
 
 export const getRootDir = () => {
-  // const specificPath = 'C:/workspace/electron/markdown-notes-electron'
-  return `${homedir()}/${appDirName}`
+  return `${homedir()}/${specificLocal}/${appDirName}`
 }
 
 export const getNotes: GetNotes = async () => {
@@ -30,4 +29,10 @@ export const getNoteInfoFromFileName = async (fileName: string): Promise<NoteInf
     title: fileName.replace(/\.md$/, ''),
     lastEditTime: fileStatus.mtimeMs
   }
+}
+
+export const readNoteContent: ReadNoteContent = async (filename) => {
+  const rootDir = getRootDir()
+
+  return readFile(`${rootDir}/${filename}.md`, { encoding: fileEncoding })
 }

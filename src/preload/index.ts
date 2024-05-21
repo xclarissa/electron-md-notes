@@ -1,4 +1,4 @@
-import { GetNotes } from '@shared/types'
+import { GetNotes, ReadNoteContent } from '@shared/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -11,7 +11,9 @@ if (!process.contextIsolated) {
 try {
   contextBridge.exposeInMainWorld('context', {
     locale: navigator.language,
-    getNotes: (...args: Parameters<GetNotes>) => ipcRenderer.invoke('getNotes', ...args)
+    getNotes: (...args: Parameters<GetNotes>) => ipcRenderer.invoke('getNotes', ...args),
+    readNoteContent: (...args: Parameters<ReadNoteContent>) =>
+      ipcRenderer.invoke('readNoteContent', ...args)
   })
 } catch (error) {
   console.error(error)
