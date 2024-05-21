@@ -3,7 +3,6 @@ import { useAtomValue } from 'jotai'
 
 export const useMarkdownEditor = () => {
   const selectedNote = useAtomValue(selectedNoteAtom)
-  console.log(selectedNote?.content, 'selectedNote')
 
   return { selectedNote }
 }

@@ -1,4 +1,5 @@
-import { contextBridge } from 'electron'
+import { GetNotes } from '@shared/types'
+import { contextBridge, ipcRenderer } from 'electron'
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
@@ -9,7 +10,8 @@ if (!process.contextIsolated) {
 
 try {
   contextBridge.exposeInMainWorld('context', {
-    locale: navigator.language
+    locale: navigator.language,
+    getNotes: (...args: Parameters<GetNotes>) => ipcRenderer.invoke('getNotes', ...args)
   })
 } catch (error) {
   console.error(error)
