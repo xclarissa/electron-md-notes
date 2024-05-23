@@ -40,12 +40,14 @@ export const selectedNoteAtom = unwrap(
     }
 )
 
-export const createEmptyNote = atom(null, (get, set) => {
+export const createEmptyNote = atom(null, async (get, set) => {
   const notes = get(notesAtom)
 
   if (!notes) return
 
-  const title = `Note ${notes.length + 1}`
+  const title = await window.context.createNote()
+
+  if (!title) return
 
   const newNote: NoteInfo = {
     title,
