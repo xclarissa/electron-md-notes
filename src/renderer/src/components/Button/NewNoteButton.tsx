@@ -7,7 +7,6 @@ export const NewNoteButton = ({ ...props }: ActionButtonProps) => {
   const createNote = useSetAtom(createEmptyNote)
 
   const handleCreateNote = async () => {
-    console.log('criou!')
     await createNote()
   }
 

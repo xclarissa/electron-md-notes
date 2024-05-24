@@ -1,13 +1,17 @@
-import { appDirName, fileEncoding, specificLocal } from '@shared/constants'
+import { appDirName, fileEncoding, specificLocal, welcomeNoteFileName } from '@shared/constants'
 import { NoteInfo } from '@shared/models'
-import { CreateNote, GetNotes, ReadNoteContent, WriteNote } from '@shared/types'
+import { CreateNote, DeleteNote, GetNotes, ReadNoteContent, WriteNote } from '@shared/types'
 import { dialog } from 'electron'
-import { ensureDir, readFile, readdir, stat, writeFile } from 'fs-extra'
+import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
+import { isEmpty } from 'lodash'
 import { homedir } from 'os'
 import path from 'path'
+import welcomeNote from '../../../resources/welcomeNote.md?asset'
 
 export const getRootDir = () => {
-  return `${homedir()}/${specificLocal}/${appDirName}`
+  const path = `${homedir()}/${specificLocal}/${appDirName}`.replace(/\//g, '\\')
+
+  return path
 }
 
 export const getNotes: GetNotes = async () => {
@@ -21,6 +25,12 @@ export const getNotes: GetNotes = async () => {
 
   const mdNoteFile = notesFileNames.filter((fileName) => fileName.endsWith('.md'))
 
+  if (isEmpty) {
+    const content = await readFile(welcomeNote, { encoding: fileEncoding })
+    await writeFile(`${rootDir}/${welcomeNoteFileName}`, content, { encoding: fileEncoding })
+
+    mdNoteFile.push(welcomeNoteFileName)
+  }
   return Promise.all(mdNoteFile.map(getNoteInfoFromFileName))
 }
 
@@ -42,8 +52,6 @@ export const readNoteContent: ReadNoteContent = async (filename) => {
 export const writeNote: WriteNote = async (filename, content) => {
   const rootDir = getRootDir()
 
-  console.info(`Writing note ${filename}`)
-
   return writeFile(`${rootDir}/${filename}.md`, content, { encoding: fileEncoding })
 }
 
@@ -62,13 +70,13 @@ export const createNote: CreateNote = async () => {
   })
 
   if (canceled || !filePath) {
-    console.log('note criation canceled')
     return false
   }
 
   const { name: filename, dir: parentDir } = path.parse(filePath)
-
   if (parentDir !== rootDir) {
+    console.log(rootDir, 'rootdir')
+    console.log(parentDir, 'parentDir')
     await dialog.showMessageBox({
       type: 'error',
       title: 'Falha na Criação',
@@ -77,8 +85,27 @@ export const createNote: CreateNote = async () => {
     return false
   }
 
-  console.info(`criando nota ${filePath}`)
   await writeFile(filePath, '')
 
   return filename
+}
+
+export const deleteNote: DeleteNote = async (filename) => {
+  const rootDir = getRootDir()
+
+  const { response } = await dialog.showMessageBox({
+    type: `warning`,
+    title: 'Deletar nota',
+    message: `Certeza que deseja deletar ${filename}? `,
+    buttons: ['Deletar', 'Cancelar'], // deletar 0, cancelar 1
+    defaultId: 1,
+    cancelId: 1
+  })
+
+  if (response === 1) {
+    return false
+  }
+
+  await remove(`${rootDir}/${filename}.md`)
+  return true
 }

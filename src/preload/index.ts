@@ -1,4 +1,4 @@
-import { CreateNote, GetNotes, ReadNoteContent, WriteNote } from '@shared/types'
+import { CreateNote, DeleteNote, GetNotes, ReadNoteContent, WriteNote } from '@shared/types'
 import { contextBridge, ipcRenderer } from 'electron'
 
 // Use `contextBridge` APIs to expose Electron APIs to
@@ -15,7 +15,8 @@ try {
     readNoteContent: (...args: Parameters<ReadNoteContent>) =>
       ipcRenderer.invoke('readNoteContent', ...args),
     writeNote: (...args: Parameters<WriteNote>) => ipcRenderer.invoke('writeNote', ...args),
-    createNote: (...args: Parameters<CreateNote>) => ipcRenderer.invoke('createNote', ...args)
+    createNote: (...args: Parameters<CreateNote>) => ipcRenderer.invoke('createNote', ...args),
+    deleteNote: (...args: Parameters<DeleteNote>) => ipcRenderer.invoke('deleteNote', ...args)
   })
 } catch (error) {
   console.error(error)
