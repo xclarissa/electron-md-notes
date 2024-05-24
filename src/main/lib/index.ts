@@ -1,4 +1,4 @@
-import { appDirName, fileEncoding, specificLocal, welcomeNoteFileName } from '@shared/constants'
+import { appDirName, fileEncoding, welcomeNoteFileName } from '@shared/constants'
 import { NoteInfo } from '@shared/models'
 import { CreateNote, DeleteNote, GetNotes, ReadNoteContent, WriteNote } from '@shared/types'
 import { dialog } from 'electron'
@@ -9,9 +9,7 @@ import path from 'path'
 import welcomeNote from '../../../resources/welcomeNote.md?asset'
 
 export const getRootDir = () => {
-  const path = `${homedir()}/${specificLocal}/${appDirName}`.replace(/\//g, '\\')
-
-  return path
+  return `${homedir()}\\${appDirName}`
 }
 
 export const getNotes: GetNotes = async () => {
@@ -75,8 +73,6 @@ export const createNote: CreateNote = async () => {
 
   const { name: filename, dir: parentDir } = path.parse(filePath)
   if (parentDir !== rootDir) {
-    console.log(rootDir, 'rootdir')
-    console.log(parentDir, 'parentDir')
     await dialog.showMessageBox({
       type: 'error',
       title: 'Falha na Criação',
