@@ -23,7 +23,7 @@ export const getNotes: GetNotes = async () => {
 
   const mdNoteFile = notesFileNames.filter((fileName) => fileName.endsWith('.md'))
 
-  if (isEmpty) {
+  if (isEmpty(mdNoteFile)) {
     const content = await readFile(welcomeNote, { encoding: fileEncoding })
     await writeFile(`${rootDir}/${welcomeNoteFileName}`, content, { encoding: fileEncoding })
 

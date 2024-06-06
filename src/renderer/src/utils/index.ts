@@ -1,13 +1,22 @@
 import clsx, { ClassValue } from 'clsx'
+import { Locale, format } from 'date-fns'
+import { toZonedTime } from 'date-fns-tz'
+import { enUS, ptBR } from 'date-fns/locale'
 import { twMerge } from 'tailwind-merge'
 
-const dateFormatter = new Intl.DateTimeFormat(window.context.locale, {
-  dateStyle: 'short',
-  timeStyle: 'short',
-  timeZone: 'UTC'
-})
+const localeMap: { [key: string]: Locale } = {
+  'en-US': enUS,
+  'pt-BR': ptBR
+}
 
-export const formatDateFromMs = (ms: number) => dateFormatter.format(ms)
+const userLocale = window.context.locale || 'en-US'
+const locale = localeMap[userLocale] || enUS
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+export const formatDateFromMs = (ms: number) => {
+  const zonedDate = toZonedTime(ms, timeZone)
+  return format(zonedDate, 'Pp', { locale })
+}
 
 export const cn = (...args: ClassValue[]) => {
   return twMerge(clsx(...args))
