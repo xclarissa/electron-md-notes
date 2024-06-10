@@ -4,7 +4,7 @@ on: pull_request
 
 jobs:
   continuos-integration:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -14,5 +14,5 @@ jobs:
           node-version: 20.
       - name: run install, build and test
         run: |
-          yarn install
-          yarn build
+          npm install
+          npm run build
