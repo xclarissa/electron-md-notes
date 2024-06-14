@@ -20,7 +20,7 @@ jobs:
       - name: Install Node and NPM
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
 
       - name: Install and build
@@ -33,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
-          npm exec electron-builder -- --publish always --win --linux
+          npm exec electron-builder -- --publish always --win --mac --linux
 
 # jobs:
 #   release:
