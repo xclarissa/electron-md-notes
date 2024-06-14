@@ -22,11 +22,20 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install and build
-        run: |
-          npm install
-          npm run postinstall
-          npm run build
+      - name: Install dependencies
+        run: npm install
+
+      - name: Post install
+        run: npm run postinstall
+
+      - name: Build application
+        run: npm run build
+
+      # - name: Install and build
+      #   run: |
+      #     npm install
+      #     npm run postinstall
+      #     npm run build
 
       - name: Publish releases
         env:
