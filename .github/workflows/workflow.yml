@@ -1,52 +1,70 @@
-# name: Continuous Integration
+name: Workflow ci
 
-# on: push
+on:
+  pull_request:
+    branches:
+      - main
 
-# permissions:
-#   contents: write
+  publish:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-latest]
+
+    steps:
+      - name: Checkout git repo
+        uses: actions/checkout@v3
+
+      - name: Install Node and NPM
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm install
+          npm run postinstall
+          npm run build
+
+      - name: Publish releases
+        env:
+          GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+        run: |
+          npm exec electron-builder -- --publish always --win --linux
 
 # jobs:
-#   build:
-#     runs-on: windows-latest
+#   release:
+#     runs-on: ${{ matrix.os }}
+
+#     strategy:
+#       matrix:
+#         os: [ubuntu-latest, macos-latest, windows-latest]
 
 #     steps:
-#       - name: Checkout code
+#       - name: Checkout
 #         uses: actions/checkout@v3
 
-#       - name: Set up Node.js
-#         uses: actions/setup-node@v2
+#       - name: Install Node.js, NPM and Yarn
+#         uses: actions/setup-node@v3
 #         with:
-#           node-version: '20'
+#           node-version: 20
 
-#       - name: Install dependencies
-#         run: npm install
+#       - name: apt-update
+#         if: startsWith(matrix.os, 'ubuntu-latest')
+#         run: sudo apt-get update
 
-#       - name: Build application
-#         run: npm run build
+#       - name: autoremove
+#         if: startsWith(matrix.os, 'ubuntu-latest')
+#         run: sudo apt autoremove
 
-#       - name: Upload build artifacts
-#         uses: actions/upload-artifact@v3
+#       - name: Install libarchive rpm on Linux
+#         if: startsWith(matrix.os, 'ubuntu-latest')
+#         run: sudo apt-get install libarchive-tools rpm
+
+#       - name: Release Electron app
+#         uses: samuelmeuli/action-electron-builder@v1
 #         with:
-#           name: build-artifacts
-#           path: out/ElectroVite-build/ElectroVite-linux-x64/
-
-# release:
-#   needs: build
-#   runs-on: ubuntu-latest
-#   steps:
-#     - name: Download build artifacts
-#       uses: actions/download-artifact@v3
-#       with:
-#         name: build-artifacts
-#         path: ./release
-
-#     - name: Create GitHub Release
-#       id: create_release
-#       uses: actions/create-release@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         tag_name: v1.0.0
-#         release_name: Release v1.0.0
-#         draft: false
-#         prerelease: false
+#           github_token: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+#           release: true
