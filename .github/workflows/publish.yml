@@ -1,6 +1,9 @@
 name: Publish
 
-on: push
+on:
+  pull_request:
+    branches:
+      - main
 
   publish:
     runs-on: ${{ matrix.os }}
@@ -30,10 +33,6 @@ on: push
           GH_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
         run: |
           npm exec electron-builder -- --publish always --win --linux
-
-
-
-
 
 # jobs:
 #   release:
