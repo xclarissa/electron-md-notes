@@ -6,7 +6,62 @@ on:
       - main
 
 jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Package application
+        run: npm run postinstall
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts-windows
+          path: out/ElectroVite-build/ElectroVite-win32-x64/**
+
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Package application
+        run: npm run postinstall
+
+      - name: Build application
+        run: npm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts-ubuntu
+          path: out/ElectroVite-build/ElectroVite-linux-x64/**
+
   publish:
+    needs: [build-ubuntu, build-windows]
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,14 +77,14 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install dependencies
-        run: npm install
+      # - name: Install dependencies
+      #   run: npm install
 
-      - name: Post install
-        run: npm run postinstall
+      # - name: Post install
+      #   run: npm run postinstall
 
-      - name: Build application
-        run: npm run build
+      # - name: Build application
+      #   run: npm run build
 
       # - name: Install and build
       #   run: |
