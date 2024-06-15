@@ -33,6 +33,7 @@
     "jotai": "^2.8.0"
   },
   "build": {
+    "asar": true,
     "appId": "com.markdown-notes.id",
     "productName": "Markdown Notes",
     "files": [
