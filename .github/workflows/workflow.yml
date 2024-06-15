@@ -26,8 +26,13 @@ jobs:
 
       - name: Remove node_modules and package-lock.json
         run: |
-          rm -rf node_modules
-          rm -f package-lock.json
+          if (${{ runner.os }} -eq 'Windows') {
+            Remove-Item node_modules -Recurse -Force
+            Remove-Item package-lock.json -Force
+          } else {
+            rm -rf node_modules
+            rm -f package-lock.json
+          }
 
       - name: Install dependencies
         run: npm install
