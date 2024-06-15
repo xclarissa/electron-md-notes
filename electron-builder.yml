@@ -1,5 +1,5 @@
-appId: com.electron.app
-productName: markdown-notes-electron
+appId: com.markdown-notes.id
+productName: Markdown Notes
 directories:
   buildResources: build
 files:
@@ -33,6 +33,7 @@ linux:
     - AppImage
     - snap
     - deb
+    - rpm
   maintainer: electronjs.org
   category: Utility
 appImage:
