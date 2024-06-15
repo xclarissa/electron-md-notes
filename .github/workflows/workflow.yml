@@ -34,7 +34,7 @@ jobs:
         run: npm run build:main
 
       - name: Package the app
-        run: npx electron-builder --${{ matrix.os }}
+        run: npx electron-builder -mwl
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
