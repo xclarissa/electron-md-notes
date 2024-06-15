@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Check out the repository
@@ -25,19 +25,13 @@ jobs:
       #   run: npm cache clean --force
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build Vite app
         run: npm run build:renderer
 
       - name: Build Electron main process
         run: npm run build:main
-
-      - name: Install dmg license for Mac
-        run: npm install "dmg-license"
-
-      - name: Package the app Mac
-        run: npx electron-builder --mac
 
       - name: Package the app Linux
         run: npx electron-builder --linux
