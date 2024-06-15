@@ -21,8 +21,8 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Clean npm cache
-        run: npm cache clean --force
+      # - name: Clean npm cache
+      #   run: npm cache clean --force
 
       - name: Install dependencies
         run: npm ci
@@ -33,8 +33,14 @@ jobs:
       - name: Build Electron main process
         run: npm run build:main
 
-      - name: Package the app
-        run: npx electron-builder -mwl
+      - name: Package the app Mac
+        run: npx electron-builder --mac
+
+      - name: Package the app Linux
+        run: npx electron-builder --linux
+
+      - name: Package the app Windows
+        run: npx electron-builder --win
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
