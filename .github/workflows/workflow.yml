@@ -33,6 +33,9 @@ jobs:
       - name: Build Electron main process
         run: npm run build:main
 
+      - name: Install dmg license for Mac
+        run: npm install "dmg-license" --save-optional
+
       - name: Package the app Mac
         run: npx electron-builder --mac
 
