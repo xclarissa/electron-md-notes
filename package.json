@@ -55,7 +55,8 @@
         "deb",
         "rpm"
       ]
-    }
+    },
+    "extends": null
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config-prettier": "^2.0.0",
