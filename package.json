@@ -37,7 +37,7 @@
     "productName": "Markdown Notes",
     "files": [
       "dist/**/*",
-      "main.js",
+      "index.js",
       "package.json"
     ],
     "directories": {
