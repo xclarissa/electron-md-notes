@@ -13,7 +13,7 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
-      - name: Check out the repository
+      - name: Checkout the repository
         uses: actions/checkout@v2
 
       - name: Set up Node.js
