@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build and artifacts
 
 on: push
 
@@ -6,7 +6,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  build-windows:
     runs-on: windows-latest
 
     steps:
@@ -21,32 +21,93 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build application
-        run: npm run build
+      - name: Install app deps
+        run: npm run postinstall
 
-      - name: Upload build artifacts
+      - name: Build application
+        run: npm run build:win
+
+      - name: Archive project
+        run: |
+          mkdir release
+          tar -czvf release\mdelectron-windows.tar.gz -C path\to\build\output .
+
+      - name: Upload Windows Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: build-artifacts
-          path: out/ElectroVite-build/ElectroVite-linux-x64/
+          name: mdelectron-windows
+          path: release\mdelectron-windows.tar.gz
 
-  release:
-    needs: build
+  build-linux:
     runs-on: ubuntu-latest
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-artifacts
-          path: ./release
 
-      - name: Create GitHub Release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install linux dependencies
+        run: npm install @esbuild/linux-x64 --save-dev
+
+      - name: Install app deps
+        run: npm run postinstall
+
+      - name: Build application
+        run: npm run build:linux
+
+      - name: Archive project
+        run: |
+          mkdir -p release
+          tar -czvf release/mdelectron-linux.tar.gz -C path/to/build/output .
+
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mdelectron-linux
+          path: release/mdelectron-linux.tar.gz
+
+  create_release:
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
-          tag_name: v1.0.0
-          release_name: Release v1.0.0
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+
+      - name: Upload Linux Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/mdelectron-linux.tar.gz
+          asset_name: mdelectron-linux.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload Windows Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: release/mdelectron-windows.tar.gz
+          asset_name: mdelectron-windows.tar.gz
+          asset_content_type: application/gzip
