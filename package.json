@@ -23,7 +23,6 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
-    "@esbuild/linux-x64": "^0.21.5",
     "@mdxeditor/editor": "^3.0.7",
     "date-fns": "^3.6.0",
     "date-fns-tz": "^3.1.3",

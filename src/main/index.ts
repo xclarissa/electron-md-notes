@@ -11,7 +11,7 @@ function createWindow(): void {
     // PESQUISAR COMO MOSTRAR ICONES FECHAR MAX E MIN DO WINDOWS
     width: 900,
     height: 670,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     ...(process.platform === 'linux' ? { icon } : {}),
     center: true,
     title: 'NoteMark',
