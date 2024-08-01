@@ -80,6 +80,7 @@ jobs:
   release:
     needs: [build-ubuntu, build-windows]
     runs-on: ubuntu-latest
+    permissions: write-all
 
     steps:
       - name: Download build artifacts for Linux
