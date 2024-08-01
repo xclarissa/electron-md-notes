@@ -36,7 +36,7 @@ jobs:
         run: yarn build:linux
 
       - name: Zip build artifacts for Ubuntu
-        run: zip -r markdown-notes-electron-linux-x64.zip dist/linux-unpacked/electron
+        run: zip -r markdown-notes-electron-linux-x64.zip . -i dist/linux-unpacked/electron
 
       - name: Upload build artifacts for Ubuntu
         uses: actions/upload-artifact@v2
@@ -69,7 +69,7 @@ jobs:
         run: yarn build:win
 
       - name: Zip build artifacts for Windows
-        run: powershell Compress-Archive -Path dist/win-unpacked/electron -DestinationPath electron.zip
+        run: powershell Compress-Archive -Path dist/win-unpacked -DestinationPath markdown-notes-electron-win32-x64.zip
 
       - name: Upload build artifacts for Windows
         uses: actions/upload-artifact@v2
