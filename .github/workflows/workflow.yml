@@ -80,7 +80,6 @@ jobs:
   release:
     needs: [build-ubuntu, build-windows]
     runs-on: ubuntu-latest
-    permissions: write-all
 
     steps:
       - name: Download build artifacts for Linux
@@ -99,7 +98,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: v1.0.0
           release_name: Release v1.0.0
@@ -109,7 +108,7 @@ jobs:
       - name: Upload Linux executables
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./release/markdown-notes-electron-linux-x64.zip
@@ -119,7 +118,7 @@ jobs:
       - name: Upload Windows executables
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./release/markdown-notes-electron-win32-x64.zip
