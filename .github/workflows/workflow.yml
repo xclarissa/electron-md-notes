@@ -36,13 +36,13 @@ jobs:
         run: yarn build:linux
 
       - name: Zip build artifacts for Ubuntu
-        run: zip -r markdown-notes-electron-linux-x64.zip out/markdown-notes-electron-linux-x64
+        run: zip -r markdown-notes-electron-linux-x64.zip dist/linux-unpacked/electron
 
       - name: Upload build artifacts for Ubuntu
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts-linux
-          path: markdown-notes-electron-linux-x64.zip
+          path: electron.zip
 
   build-windows:
     runs-on: windows-latest
@@ -69,13 +69,13 @@ jobs:
         run: yarn build:win
 
       - name: Zip build artifacts for Windows
-        run: powershell Compress-Archive -Path out/markdown-notes-electron-win32-x64 -DestinationPath markdown-notes-electron-win32-x64.zip
+        run: powershell Compress-Archive -Path dist/win-unpacked/electron -DestinationPath electron.zip
 
       - name: Upload build artifacts for Windows
         uses: actions/upload-artifact@v2
         with:
           name: build-artifacts-windows
-          path: markdown-notes-electron-win32-x64.zip
+          path: electron.zip
 
   release:
     needs: [build-ubuntu, build-windows]
@@ -111,8 +111,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/markdown-notes-electron-linux-x64.zip
-          asset_name: markdown-notes-electron-linux-x64.zip
+          asset_path: ./release/electron.zip
+          asset_name: electron.zip
           asset_content_type: application/zip
 
       - name: Upload Windows executables
@@ -121,6 +121,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/markdown-notes-electron-win32-x64.zip
-          asset_name: markdown-notes-electron-win32-x64.zip
+          asset_path: ./release/electron.zip
+          asset_name: electron.zip
           asset_content_type: application/zip
