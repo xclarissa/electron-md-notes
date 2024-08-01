@@ -1,0 +1,126 @@
+name: Build and artifacts
+
+on: push
+
+permissions:
+  contents: write
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install linux dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dpkg fakeroot
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Package application
+        run: yarn postinstall
+
+      - name: Build application
+        run: yarn build:linux
+
+      - name: Zip build artifacts for Ubuntu
+        run: zip -r markdown-notes-electron-linux-x64.zip out/markdown-notes-electron-linux-x64
+
+      - name: Upload build artifacts for Ubuntu
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts-linux
+          path: markdown-notes-electron-linux-x64.zip
+
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Package application
+        run: yarn postinstall
+
+      - name: Build application
+        run: yarn build:win
+
+      - name: Zip build artifacts for Windows
+        run: powershell Compress-Archive -Path out/markdown-notes-electron-win32-x64 -DestinationPath markdown-notes-electron-win32-x64.zip
+
+      - name: Upload build artifacts for Windows
+        uses: actions/upload-artifact@v2
+        with:
+          name: build-artifacts-windows
+          path: markdown-notes-electron-win32-x64.zip
+
+  release:
+    needs: [build-ubuntu, build-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download build artifacts for Linux
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts-linux
+          path: ./release
+
+      - name: Download build artifacts for Windows
+        uses: actions/download-artifact@v2
+        with:
+          name: build-artifacts-windows
+          path: ./release
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
+        with:
+          tag_name: v1.0.7
+          release_name: Release v1.0.7
+          draft: false
+          prerelease: false
+
+      - name: Upload Linux executables
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/markdown-notes-electron-linux-x64.zip
+          asset_name: markdown-notes-electron-linux-x64.zip
+          asset_content_type: application/zip
+
+      - name: Upload Windows executables
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.MY_ACCESS_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./release/markdown-notes-electron-win32-x64.zip
+          asset_name: markdown-notes-electron-win32-x64.zip
+          asset_content_type: application/zip
